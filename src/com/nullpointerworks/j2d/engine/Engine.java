@@ -2,7 +2,7 @@ package com.nullpointerworks.j2d.engine;
 
 import java.util.Comparator;
 
-import com.nullpointerworks.core.buffer.concurrency.SyncIntBuffer;
+import com.nullpointerworks.core.buffer.IntBuffer;
 import com.nullpointerworks.j2d.Request;
 import com.nullpointerworks.j2d.engine.shader.Layering;
 import com.nullpointerworks.j2d.engine.shader.Rasterizer;
@@ -15,8 +15,8 @@ public class Engine
 	protected Layering layer;
 	protected Rasterizer raster;
 	
-	private SyncIntBuffer depth;
-	private SyncIntBuffer screen;
+	private IntBuffer depth;
+	private IntBuffer screen;
 	private int[] depthPX, screenPX;
 	private int CLEAR = 0xFF202020;
 	
@@ -25,10 +25,10 @@ public class Engine
 	
 	public Engine(int width, int height)
 	{
-		depth 		= new SyncIntBuffer(width, height);
+		depth 		= new IntBuffer(width, height);
 		depthPX 	= depth.content();
 		
-		screen 		= new SyncIntBuffer(width, height);
+		screen 		= new IntBuffer(width, height);
 		screenPX 	= screen.content();
 		
 		requests 	= new Array<Request>();
@@ -63,7 +63,7 @@ public class Engine
 		requests.clear();
 	}
 	
-	public SyncIntBuffer getFrame()
+	public IntBuffer getFrame()
 	{
 		return screen;
 	}

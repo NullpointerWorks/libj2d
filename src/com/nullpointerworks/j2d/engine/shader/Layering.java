@@ -1,7 +1,6 @@
 package com.nullpointerworks.j2d.engine.shader;
 
 import com.nullpointerworks.core.buffer.IntBuffer;
-import com.nullpointerworks.core.buffer.concurrency.SyncIntBuffer;
 import com.nullpointerworks.j2d.Request;
 import com.nullpointerworks.math.geometry.g2d.Rectangle;
 import com.nullpointerworks.util.pack.Array;
@@ -9,9 +8,9 @@ import com.nullpointerworks.util.pack.Array;
 public class Layering implements Runnable
 {
 	private Array<Request> l;
-	private SyncIntBuffer d;
+	private IntBuffer d;
 	
-	public Layering(Array<Request> l, SyncIntBuffer d)
+	public Layering(Array<Request> l, IntBuffer d)
 	{
 		this.l = l;
 		this.d = d;

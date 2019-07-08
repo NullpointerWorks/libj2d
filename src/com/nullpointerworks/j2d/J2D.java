@@ -2,7 +2,6 @@ package com.nullpointerworks.j2d;
 
 import com.nullpointerworks.core.Monitor;
 import com.nullpointerworks.core.buffer.IntBuffer;
-import com.nullpointerworks.core.buffer.concurrency.SyncIntBuffer;
 import com.nullpointerworks.core.input.KeyboardInput;
 import com.nullpointerworks.core.input.MouseInput;
 import com.nullpointerworks.core.window.Window;
@@ -82,7 +81,7 @@ public class J2D
 		instance.request(r);
 	}
 	
-	public static SyncIntBuffer getFrame() 
+	public static IntBuffer getFrame() 
 	{
 		return instance.frame();
 	}
@@ -132,7 +131,7 @@ public class J2D
 	private boolean _initializedW 	= false;
 	private Engine _engine 			= null;
 	private Window _window 			= null;
-	private SyncIntBuffer _screen 	= null;
+	private IntBuffer _screen 		= null;
 	private int _width 		= 1;
 	private int _height 	= 1;
 	private int _display 	= 0;
@@ -215,7 +214,7 @@ public class J2D
 			_window.addInputDevice(new KeyboardInput());
 			_window.setWindowMode(WindowMode.WINDOWED);
 			_window.setVisible(true);
-			_screen = new SyncIntBuffer(_width, _height);
+			_screen = new IntBuffer(_width, _height);
 			_initializedW = true;
 		}
 	}
@@ -244,7 +243,7 @@ public class J2D
 		_engine.addRequest(r);
 	}
 	
-	public SyncIntBuffer frame() 
+	public IntBuffer frame() 
 	{
 		if (!isEngineInitialized()) 
 		{
