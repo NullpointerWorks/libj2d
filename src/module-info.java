@@ -1,11 +1,11 @@
 /**
- * @since 1.0
+ * @version 1.0.0
  */
 module com.nullpointerworks.j2d
 {
-	requires transitive com.nullpointerworks.core;
-	requires transitive com.nullpointerworks.math;
-	requires transitive com.nullpointerworks.util;
+	requires transitive libnpw.core;
+	requires transitive libnpw.math;
+	requires transitive libnpw.util;
 	exports com.nullpointerworks.j2d;
 	exports com.nullpointerworks.j2d.engine;
 }
