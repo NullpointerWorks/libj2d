@@ -1,8 +1,16 @@
+/*
+ * Creative Commons - Attribution, Share Alike 4.0 
+ * Nullpointer Works (2019)
+ * Use is subject to license terms.
+ */
 package com.nullpointerworks.j2d;
 
 import com.nullpointerworks.core.buffer.IntBuffer;
 import com.nullpointerworks.math.geometry.g2d.Rectangle;
 
+/**
+ * Container object for image manipulation used in the J2D engine. 
+ */
 public class Request 
 {
 	/*
