@@ -5,22 +5,25 @@
  */
 package com.nullpointerworks.j2d.engine.shader;
 
+import java.util.List;
+
 import com.nullpointerworks.core.buffer.IntBuffer;
-import com.nullpointerworks.j2d.Request;
+import com.nullpointerworks.j2d.BufferedRequest;
 import com.nullpointerworks.math.geometry.g2d.Rectangle;
-import com.nullpointerworks.util.pack.Array;
 
 public class Rasterizer implements Runnable
 {
-	private Array<Request> l;
+	private List<BufferedRequest> l;
 	private IntBuffer s;
 	private IntBuffer d;
+	private float a;
 	
-	public Rasterizer(Array<Request> l, IntBuffer s, IntBuffer d)
+	public Rasterizer(List<BufferedRequest> l, IntBuffer s, IntBuffer d, float a)
 	{
 		this.l = l;
 		this.s = s;
 		this.d = d;
+		this.a = a;
 	}
 	
 	@Override
@@ -36,12 +39,12 @@ public class Rasterizer implements Runnable
 		 */
 		for (int leng=l.size()-1; leng>=0; leng--)
 		{
-			Request di = l.get(leng);
+			BufferedRequest di = l.get(leng);
 			draw(di, dpx, spx, DEST_W, DEST_H);
 		}
 	}
 	
-	public void draw(Request dr, 
+	public void draw(BufferedRequest dr, 
 					 int[] depthPX, 
 					 int[] screenPX,
 					 int DEST_W,
@@ -50,65 +53,55 @@ public class Rasterizer implements Runnable
 		IntBuffer source 	= dr.image;
 		Rectangle aabb 		= dr.aabb;
 		float[][] matrix 	= dr.transform;
+		int layer			= dr.layer;
 		
-		int OFF_X=0, OFF_Y=0;
 		int SOURCE_W 	= source.getWidth();
 		int SOURCE_H 	= source.getHeight();
-		int tx 			= rnd(aabb.x);
-		int ty 			= rnd(aabb.y);
-		int AABB_W 		= rnd(aabb.w);
-		int AABB_H 		= rnd(aabb.h);
-		int layer		= dr.layer;
 		int[] sourcePX 	= source.content();
 		
-		// edge clipping
-		AABB_W += (tx+AABB_W > DEST_W)? (DEST_W-(tx+AABB_W)) :0;
-		AABB_H += (ty+AABB_H > DEST_H)? (DEST_H-(ty+AABB_H)) :0;
-		OFF_X += (tx<0)?(-tx):0;
-		OFF_Y += (ty<0)?(-ty):0;
+		float startx 	= aabb.x - 1f;
+		float endx 		= aabb.w + aabb.x;
+		float starty 	= aabb.y - 1f;
+		float endy 		= aabb.h + aabb.y;
+
+		// screen edge clipping
+		startx = (startx < -0.5)?-0.5f: startx;
+		starty = (starty < -0.5)?-0.5f: starty;
+		endx = (endx >= DEST_W)? DEST_W-1: endx;
+		endy = (endy >= DEST_H)? DEST_H-1: endy;
 		
-		// loop through the pixels in the AABB
-		for (int j=OFF_Y, k=AABB_H; j<k; j++)
+		for (float j=starty, k=endy; j<k; j+=a)
 		{
-			int stride = tx+(ty+j)*DEST_W;
-			
-			for (int i=OFF_X, l=AABB_W; i<l; i++)
-			{
+			for (float i=startx, l=endx; i<l; i+=a)
+			{				
 				float[] v = {i,j};
 				transform(matrix, v);
 				
-				// check image clipping
-				if (v[0] < 0f) continue;
+				if (v[0] < -0.5f) continue;
 				int x = rnd(v[0]);
 				if (x >= SOURCE_W) continue;
 				
-				if (v[1] < 0f) continue;
+				if (v[1] < -0.5f) continue;
 				int y = rnd(v[1]);
 				if (y >= SOURCE_H) continue;
 				
-				// check layering
-				int indexS = i + stride;
-				int lay = depthPX[indexS];
+				int plotx = rnd(i);
+				int ploty = rnd(j);
+				int STRIDE = plotx + ploty*DEST_W;
+
+				int lay = depthPX[STRIDE];
 				if (layer < lay) continue;
 				
-				// get image color
-				int indexP = x + y*SOURCE_W;
-				int sourceCol = sourcePX[indexP];
-				
-				// if image pixel is 100% transparent, skip draw
-				int alpha = (sourceCol>>24) & 0xFF;
+				int color = sourcePX[x + y*SOURCE_W];
+				int alpha = (color>>24) & 0xFF;
 				if (alpha == 0) continue;
 				
-				// plot color
-				// only blend when alpha is less than 255
-				// add 1 to 255 alpha value to reach 256
 				if (alpha < 255) 
 				{
-					// get background color
-					int screenCol = screenPX[indexS];
-					sourceCol = lerp256(screenCol, sourceCol, alpha+1);
+					int screenCol = screenPX[STRIDE];
+					color = lerp256(screenCol, color, alpha+1);
 				}
-				screenPX[indexS] = sourceCol; // sync plotting
+				screenPX[STRIDE] = color;
 			}
 		}
 	}
@@ -116,7 +109,7 @@ public class Rasterizer implements Runnable
 	/*
 	 * JVM optimizes this function
 	 */
-	protected final void transform(float[][] m, float[] v)
+	private final void transform(float[][] m, float[] v)
 	{
 		float vx,vy;
 		float[] mp = m[0];
@@ -128,9 +121,9 @@ public class Rasterizer implements Runnable
 	}
 	
 	/**
-	 * integer interpolation of 32bit colors
+	 * integer interpolation of ARGB 32-bit colors
 	 */
-	public int lerp256(int c1, int c2, int lerp) 
+	private final int lerp256(int c1, int c2, int lerp) 
 	{
 		int ag1 = c1 & 0xFF00FF00;
 		int ag2 = c2 & 0xFF00FF00;
@@ -144,7 +137,7 @@ public class Rasterizer implements Runnable
 	    return (ag1 & 0xFF00FF00) + (rb1 & 0x00FF00FF);
 	}
 	
-	protected final int rnd(float x)
+	private final int rnd(float x)
 	{
 		return (int)(x+0.5f);
 	}

@@ -6,17 +6,17 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/Development/Java/lib/npw/v1.0/libnpw-core.jar">
+	<classpathentry kind="lib" path="F:/Development/Java/lib/npw/v1.0/libnpw-core.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/Development/Java/lib/npw/v1.0/libnpw-math.jar">
+	<classpathentry kind="lib" path="F:/Development/Java/lib/npw/v1.0/libnpw-math.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/Development/Java/lib/npw/v1.0/libnpw-util.jar">
+	<classpathentry kind="lib" path="F:/Development/Java/lib/npw/v1.0/libnpw-util.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

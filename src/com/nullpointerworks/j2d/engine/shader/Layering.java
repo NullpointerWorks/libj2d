@@ -5,17 +5,18 @@
  */
 package com.nullpointerworks.j2d.engine.shader;
 
+import java.util.List;
+
 import com.nullpointerworks.core.buffer.IntBuffer;
-import com.nullpointerworks.j2d.Request;
+import com.nullpointerworks.j2d.BufferedRequest;
 import com.nullpointerworks.math.geometry.g2d.Rectangle;
-import com.nullpointerworks.util.pack.Array;
 
 public class Layering implements Runnable
 {
-	private Array<Request> l;
+	private List<BufferedRequest> l;
 	private IntBuffer d;
 	
-	public Layering(Array<Request> l, IntBuffer d)
+	public Layering(List<BufferedRequest> l, IntBuffer d)
 	{
 		this.l = l;
 		this.d = d;
@@ -34,72 +35,68 @@ public class Layering implements Runnable
 		 */
 		for (int leng=l.size()-1; leng>=0; leng--)
 		{
-			Request di = l.get(leng);
+			BufferedRequest di = l.get(leng);
 			boolean c = draw(di, dPX, DEST_W, DEST_H);
 			if (c) l.remove(leng); // cull obfuscated images
 		}
 	}
 	
-	public boolean draw(Request dr, 
-						 int[] depthPX,
-						 int DEST_W,
-						 int DEST_H) 
+	public boolean draw(BufferedRequest dr, 
+						int[] depthPX,
+						int DEST_W,
+						int DEST_H) 
 	{
-		float[][] matrix 	= dr.transform;
+		boolean cull		= true;	
 		IntBuffer source 	= dr.image;
 		Rectangle aabb 		= dr.aabb;
-		int[] sourcePX 		= source.content();
+		float[][] matrix 	= dr.transform;
+		int layer			= dr.layer;
 		
-		int OFF_X=0, OFF_Y=0;
 		int SOURCE_W 	= source.getWidth();
 		int SOURCE_H 	= source.getHeight();
-		int tx 			= rnd(aabb.x);
-		int ty 			= rnd(aabb.y);
-		int BOUND_W 	= rnd(aabb.w);
-		int BOUND_H 	= rnd(aabb.h);
-		int layer		= dr.layer;
-		boolean cull	= true;	
+		int[] sourcePX 	= source.content();
 		
-		// edge clipping
-		BOUND_W += (tx+BOUND_W >= DEST_W)? (DEST_W-(tx+BOUND_W)) :0;
-		BOUND_H += (ty+BOUND_H >= DEST_H)? (DEST_H-(ty+BOUND_H)) :0;
-		OFF_X	+= (tx<0)?(-tx):0;
-		OFF_Y	+= (ty<0)?(-ty):0;
+		float startx 	= aabb.x - 1f;
+		float endx 		= aabb.w + aabb.x + 1f;
+		float starty 	= aabb.y - 1f;
+		float endy 		= aabb.h + aabb.y + 1f;
 		
-		// loop through the pixels in the AABB
-		for (int j=OFF_Y, k=BOUND_H; j<k; j++)
+		// screen edge clipping
+		startx = (startx < -0.5)?-0.5f: startx;
+		starty = (starty < -0.5)?-0.5f: starty;
+		endx = (endx >= DEST_W)? DEST_W-1: endx;
+		endy = (endy >= DEST_H)? DEST_H-1: endy;
+		
+		for (float j=starty, k=endy; j<k; j+=1f)
 		{
-			int stride = tx+(ty+j)*DEST_W;
-			
-			for (int i=OFF_X, l=BOUND_W; i<l; i++)
+			for (float i=startx, l=endx; i<l; i+=1f)
 			{
 				float[] v = {i,j};
 				transform(matrix, v);
 				
-				// check image clipping
-				if (v[0] < 0f) continue;
+				if (v[0] < -0.5f) continue;
 				int x = rnd(v[0]);
 				if (x >= SOURCE_W) continue;
 				
-				if (v[1] < 0f) continue;
+				if (v[1] < -0.5f) continue;
 				int y = rnd(v[1]);
 				if (y >= SOURCE_H) continue;
 				
-				// check layer values
-				int indexD = i+stride;
-				int depth = depthPX[indexD];
+				int plotx = rnd(i);
+				int ploty = rnd(j);
+				int STRIDE = plotx + ploty*DEST_W;
+
+				int depth = depthPX[STRIDE];
 				if (layer < depth) continue;
 				
-				// check for alpha. all translucent pixels are skipped
-				int indexP 	= x + y*SOURCE_W;
-				int sourceCol = sourcePX[indexP];
-				int alpha = (sourceCol>>24) & 0xFF;
-				if (alpha!=255) continue;
+				int color = sourcePX[x + y*SOURCE_W];
+				int alpha = (color>>24) & 0xFF;
+				if (alpha==255) continue;
 				
 				if (layer > depth) 
 				{
 					cull = false;
-					depthPX[indexD] = layer;
+					depthPX[STRIDE] = layer;
 				}
 			}
 		}

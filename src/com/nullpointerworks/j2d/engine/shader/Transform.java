@@ -5,22 +5,28 @@
  */
 package com.nullpointerworks.j2d.engine.shader;
 
+import java.util.List;
+
 import com.nullpointerworks.core.buffer.IntBuffer;
+import com.nullpointerworks.j2d.BufferedRequest;
 import com.nullpointerworks.j2d.Request;
 import com.nullpointerworks.math.Approximate;
 import com.nullpointerworks.math.matrix.Matrix3;
-import com.nullpointerworks.util.pack.Array;
 
 /*
  * applies translations, rotations, scaling, etc to the given request
  */
 public class Transform implements Runnable
 {
-	private Array<Request> l;
+	private List<Request> l;
+	private List<BufferedRequest> b;
+	private Matrix3 M3;
 	
-	public Transform(Array<Request> l) 
+	public Transform(List<Request> l, List<BufferedRequest> b) 
 	{
-		this.l=l;
+		this.l = l;
+		this.b = b;
+		M3 = new Matrix3();
 	}
 	
 	@Override
@@ -37,12 +43,14 @@ public class Transform implements Runnable
 		/*
 		 * transform source image
 		 */
-		IntBuffer img 		= req.image;
-		Float scaleW		= req.scale_w;
-		Float scaleH		= req.scale_h;
-		Float rotate 		= req.angle;
-		float source_w 		= img.getWidth();
-		float source_h 		= img.getHeight();
+		IntBuffer img 	= req.image;
+		Float x			= req.vertex[0];
+		Float y			= req.vertex[1];
+		Float scaleW	= req.scale_w;
+		Float scaleH	= req.scale_h;
+		Float rotate 	= req.angle;
+		float source_w 	= img.getWidth();
+		float source_h 	= img.getHeight();
 		
 		/*
 		 * scale image
@@ -84,9 +92,9 @@ public class Transform implements Runnable
 		 */
 	    float[][] m_rotate = 
     	{
-    		{cos,-sin, 0.5f*scale_w},
-    		{sin, cos, 0.5f*scale_h},
-    		{0f,0f,1f}
+    		{cos,-sin, scale_w*0.5f-1f},
+    		{sin, cos, scale_h*0.5f-1f},
+    		{ 0f,  0f, 1f}
     	};
 	    
 	    float[][] m_scale = 
@@ -98,18 +106,22 @@ public class Transform implements Runnable
 	    
 	    float[][] m_trans = 
 	    {
-    		{1f,0f,-0.5f*rotate_w},
-    		{0f,1f,-0.5f*rotate_h},
+    		{1f,0f,-x},
+    		{0f,1f,-y},
     		{0f,0f,1f}
 	    };
 	    
 	    /*
 	     * compile transformation data
 	     */
-		req.transform = Matrix3.mul(m_scale, m_rotate, m_trans);
-		req.aabb.x = req.x - 0.5f*rotate_w;
-		req.aabb.y = req.y - 0.5f*rotate_h;
-		req.aabb.w = rotate_w;
-		req.aabb.h = rotate_h;
+	    BufferedRequest br = new BufferedRequest();
+	    br.image 		= img;
+	    br.layer 		= req.layer;
+	    br.transform 	= M3.mul(m_scale, m_rotate, m_trans);
+	    br.aabb.x 		= x - 0.5f*rotate_w;
+	    br.aabb.y 		= y - 0.5f*rotate_h;
+	    br.aabb.w 		= rotate_w;
+		br.aabb.h 		= rotate_h;
+	    b.add(br);
 	}
 }

@@ -5,14 +5,16 @@
  */
 package com.nullpointerworks.j2d.engine;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import com.nullpointerworks.core.buffer.IntBuffer;
+import com.nullpointerworks.j2d.BufferedRequest;
 import com.nullpointerworks.j2d.Request;
 import com.nullpointerworks.j2d.engine.shader.Layering;
 import com.nullpointerworks.j2d.engine.shader.Rasterizer;
 import com.nullpointerworks.j2d.engine.shader.Transform;
-import com.nullpointerworks.util.pack.Array;
 
 public class Engine 
 {
@@ -24,9 +26,11 @@ public class Engine
 	private IntBuffer screen;
 	private int[] depthPX, screenPX;
 	private int CLEAR = 0xFF202020;
+	private float accuracy = 0.49f;
 	
-	private Array<Request> requests;
-	private Comparator<Request> compare;
+	private List<Request> requests;
+	private List<BufferedRequest> brequest;
+	private Comparator<BufferedRequest> compare;
 	
 	public Engine(int width, int height)
 	{
@@ -36,22 +40,28 @@ public class Engine
 		screen 		= new IntBuffer(width, height);
 		screenPX 	= screen.content();
 		
-		requests 	= new Array<Request>();
-		compare 	= new Comparator<Request>()
+		requests 	= new ArrayList<Request>();
+		brequest 	= new ArrayList<BufferedRequest>();
+		compare 	= new Comparator<BufferedRequest>()
 		{
 			@Override
-			public int compare(Request o1, Request o2) 
+			public int compare(BufferedRequest o1, BufferedRequest o2) 
 			{
 				return o2.layer - o1.layer;
 			}
 		};
 		
-		transform 	= new Transform(requests);
-		layer		= new Layering(requests, depth);
-		raster 		= new Rasterizer(requests, screen, depth);
+		transform 	= new Transform(requests, brequest);
+		layer		= new Layering(brequest, depth);
+		raster 		= new Rasterizer(brequest, screen, depth, accuracy);
 	}
 	
-	public void addRequest(Request r)
+	public void accuracy(float acc)
+	{
+		accuracy = acc;
+	}
+	
+	public void request(Request r)
 	{
 		requests.add(r);
 	}
@@ -60,20 +70,27 @@ public class Engine
 	{
 		clear(screenPX, CLEAR);
 		clear(depthPX, 0);
-		
 		transform.run();
-		requests.sort(compare);
+		brequest.sort(compare);
 		layer.run();
 		raster.run();
-		requests.clear();
+		clear();
 	}
 	
-	public IntBuffer getFrame()
+	private void clear()
+	{
+		for (int l=brequest.size()-1;l>=0; l--)
+			brequest.get(l).free();
+		requests.clear();
+		brequest.clear();
+	}
+	
+	public IntBuffer frame()
 	{
 		return screen;
 	}
 	
-	public int[] getContent()
+	public int[] content()
 	{
 		return screenPX;
 	}

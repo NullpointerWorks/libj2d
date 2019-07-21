@@ -1,6 +1,6 @@
 /**
  * @version 1.0.0
- * @author Michiel Drost - nullpointerworks
+ * @author Michiel Drost - Nullpointer Works
  */
 module com.nullpointerworks.j2d
 {
