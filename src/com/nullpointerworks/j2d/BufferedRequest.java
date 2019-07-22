@@ -9,7 +9,7 @@ import com.nullpointerworks.core.buffer.IntBuffer;
 import com.nullpointerworks.math.geometry.g2d.Rectangle;
 
 /**
- * The engine performes various calculations before rendering. This object acts as a 
+ * The engine performs various calculations before rendering. This object is an intermediate state between requesting and rendering.
  * @since 1.0.0
  */
 public class BufferedRequest 
