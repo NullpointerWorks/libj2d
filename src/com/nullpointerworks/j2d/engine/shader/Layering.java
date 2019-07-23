@@ -11,7 +11,7 @@ import com.nullpointerworks.core.buffer.IntBuffer;
 import com.nullpointerworks.j2d.BufferedRequest;
 import com.nullpointerworks.math.geometry.g2d.Rectangle;
 
-public class Layering implements Runnable
+public class Layering extends ShaderMath implements Runnable
 {
 	private List<BufferedRequest> l;
 	private IntBuffer d;
@@ -101,21 +101,5 @@ public class Layering implements Runnable
 			}
 		}
 		return cull;
-	}
-	
-	protected final void transform(float[][] m, float[] v)
-	{
-		float vx,vy;
-		float[] mp = m[0];
-		vx = mp[0]*v[0] + mp[1]*v[1] + mp[2];
-		mp = m[1];
-		vy = mp[0]*v[0] + mp[1]*v[1] + mp[2];
-		v[0] = vx;
-		v[1] = vy;
-	}
-
-	protected final int rnd(float x)
-	{
-		return (int)(x+0.5f);
 	}
 }

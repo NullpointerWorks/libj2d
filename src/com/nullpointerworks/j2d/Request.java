@@ -96,7 +96,7 @@ public class Request
 	
 	/**
 	 * The rotation of the sprite follows general mathematical rules. Positive rotation results in counter-clockwise image rotation.
-	 * @param angle - the angle of ration in radians
+	 * @param angle - the angle of rotation in radians
 	 * @return a reference of this {@code Request} object
 	 * @since 1.0.0
 	 */

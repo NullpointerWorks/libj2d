@@ -16,7 +16,7 @@ import com.nullpointerworks.math.matrix.Matrix3;
 /*
  * applies translations, rotations, scaling, etc to the given request
  */
-public class Transform implements Runnable
+public class Transform extends ShaderMath implements Runnable
 {
 	private List<Request> l;
 	private List<BufferedRequest> b;
@@ -110,18 +110,49 @@ public class Transform implements Runnable
     		{0f,1f,-y},
     		{0f,0f,1f}
 	    };
+	    float[][] tmat = M3.mul(m_scale, m_rotate, m_trans);
 	    
-	    /*
-	     * compile transformation data
-	     */
+	    
+	    //*
+	    
+	    float[] v00 = {0f, 0f};
+	    float[] v01 = {0f, rotate_w};
+	    float[] v10 = {rotate_h, 0f};
+	    float[] v11 = {rotate_h, rotate_w};
+	    
+	    transform(tmat, v00);
+	    transform(tmat, v01);
+	    transform(tmat, v10);
+	    transform(tmat, v11);
+	    
+	    float minx = min(v00[0], v01[0], v10[0], v11[0]);
+	    float miny = min(v00[1], v01[1], v10[1], v11[1]);
+	    float maxx = max(v00[0], v01[0], v10[0], v11[0]);
+	    float maxy = max(v00[1], v01[1], v10[1], v11[1]);
+	    
 	    BufferedRequest br = new BufferedRequest();
-	    br.image 		= img;
 	    br.layer 		= req.layer;
-	    br.transform 	= M3.mul(m_scale, m_rotate, m_trans);
-	    br.aabb.x 		= x - 0.5f*rotate_w;
-	    br.aabb.y 		= y - 0.5f*rotate_h;
+	    br.image 		= img;
+	    br.transform 	= tmat;
+	    br.aabb.x 		= minx;
+	    br.aabb.y 		= miny;
+	    br.aabb.w 		= maxx;
+		br.aabb.h 		= maxy;
+	    b.add(br);
+
+	    /*/
+	    
+	    BufferedRequest br = new BufferedRequest();
+	    br.layer 		= req.layer;
+	    br.image 		= img;
+	    br.transform 	= tmat;
+	    br.aabb.x 		= x - rotate_w*0.5f;
+	    br.aabb.y 		= y - rotate_h*0.5f;
 	    br.aabb.w 		= rotate_w;
 		br.aabb.h 		= rotate_h;
 	    b.add(br);
+	    
+	    
+	    //*/
 	}
 }

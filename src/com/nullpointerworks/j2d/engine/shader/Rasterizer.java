@@ -11,7 +11,7 @@ import com.nullpointerworks.core.buffer.IntBuffer;
 import com.nullpointerworks.j2d.BufferedRequest;
 import com.nullpointerworks.math.geometry.g2d.Rectangle;
 
-public class Rasterizer implements Runnable
+public class Rasterizer extends ShaderMath implements Runnable
 {
 	private List<BufferedRequest> l;
 	private IntBuffer s;
@@ -104,41 +104,5 @@ public class Rasterizer implements Runnable
 				screenPX[STRIDE] = color;
 			}
 		}
-	}
-	
-	/*
-	 * JVM optimizes this function
-	 */
-	private final void transform(float[][] m, float[] v)
-	{
-		float vx,vy;
-		float[] mp = m[0];
-		vx = mp[0]*v[0] + mp[1]*v[1] + mp[2];
-		mp = m[1];
-		vy = mp[0]*v[0] + mp[1]*v[1] + mp[2];
-		v[0] = vx;
-		v[1] = vy;
-	}
-	
-	/**
-	 * integer interpolation of ARGB 32-bit colors
-	 */
-	private final int lerp256(int c1, int c2, int lerp) 
-	{
-		int ag1 = c1 & 0xFF00FF00;
-		int ag2 = c2 & 0xFF00FF00;
-		int rb1 = c1 & 0x00FF00FF;
-		int rb2 = c2 & 0x00FF00FF;
-		int l 	= (256-lerp);
-		ag1 = ag1*l + ag2*lerp;
-		rb1 = rb1*l + rb2*lerp;
-		ag1 = ag1>>8;
-		rb1 = rb1>>8;
-	    return (ag1 & 0xFF00FF00) + (rb1 & 0x00FF00FF);
-	}
-	
-	private final int rnd(float x)
-	{
-		return (int)(x+0.5f);
 	}
 }
