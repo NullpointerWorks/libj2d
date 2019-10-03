@@ -1,5 +1,5 @@
 /**
- * @version 1.0.0
+ * @version 1.0.0 pre-release
  * @author Michiel Drost - Nullpointer Works
  */
 module libnpw.j2d

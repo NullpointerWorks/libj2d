@@ -11,11 +11,20 @@ import com.nullpointerworks.core.buffer.IntBuffer;
 import com.nullpointerworks.j2d.BufferedRequest;
 import com.nullpointerworks.math.geometry.g2d.Rectangle;
 
+/**
+ * 
+ * @since 1.0.0
+ * @author Michiel Drost - Nullpointer Works
+ */
 public class Layering extends ShaderMath implements Runnable
 {
 	private List<BufferedRequest> l;
 	private IntBuffer d;
 	
+	/**
+	 * 
+	 * @since 1.0.0
+	 */
 	public Layering(List<BufferedRequest> l, IntBuffer d)
 	{
 		this.l = l;
@@ -41,6 +50,10 @@ public class Layering extends ShaderMath implements Runnable
 		}
 	}
 	
+	/**
+	 * 
+	 * @since 1.0.0
+	 */
 	public boolean draw(BufferedRequest dr, 
 						int[] depthPX,
 						int DEST_W,

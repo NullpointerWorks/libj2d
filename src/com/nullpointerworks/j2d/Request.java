@@ -10,9 +10,16 @@ import com.nullpointerworks.core.buffer.IntBuffer;
 /**
  * Sprite container class used for image manipulation in the J2D engine. 
  * @since 1.0.0
+ * @author Michiel Drost - Nullpointer Works
  */
 public class Request 
 {
+	/**
+	 * The buffered request object is an intermediate step between queuing and rendering a {@code Request}. Though, technically, this object should be created dynamically by the engine it can be very CPU intensive to create a new {@code BufferedRequest}s for each request at high FPS rates. Especially when the engine has to process many requests per frame (for example, in a game). This object exists here to save on performance losses and should not be modified by the user.
+	 * @since 1.0.0
+	 */
+	public final BufferedRequest br = new BufferedRequest();
+	
 	/**
 	 * IntBuffer object placeholder for the source image.
 	 * @since 1.0.0
@@ -136,6 +143,7 @@ public class Request
 	 */
 	public void free()
 	{
+		br.free();
 		image	= null;
 		vertex	= null;
 		angle 	= null;

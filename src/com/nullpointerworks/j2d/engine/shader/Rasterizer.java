@@ -11,6 +11,11 @@ import com.nullpointerworks.core.buffer.IntBuffer;
 import com.nullpointerworks.j2d.BufferedRequest;
 import com.nullpointerworks.math.geometry.g2d.Rectangle;
 
+/**
+ * 
+ * @since 1.0.0
+ * @author Michiel Drost - Nullpointer Works
+ */
 public class Rasterizer extends ShaderMath implements Runnable
 {
 	private List<BufferedRequest> l;
@@ -18,11 +23,24 @@ public class Rasterizer extends ShaderMath implements Runnable
 	private IntBuffer d;
 	private float a;
 	
+	/**
+	 * 
+	 * @since 1.0.0
+	 */
 	public Rasterizer(List<BufferedRequest> l, IntBuffer s, IntBuffer d, float a)
 	{
 		this.l = l;
 		this.s = s;
 		this.d = d;
+		this.a = a;
+	}
+	
+	/**
+	 * 
+	 * @since 1.0.0
+	 */
+	public void accuracy(float a)
+	{
 		this.a = a;
 	}
 	
@@ -35,7 +53,7 @@ public class Rasterizer extends ShaderMath implements Runnable
 		int DEST_H 	= s.getHeight();
 		
 		/*
-		 * images are sorted in ascending order. begin drawing from the 
+		 * images are sorted in ascending order, and layering has been applied. begin drawing from the last, most far away image
 		 */
 		for (int leng=l.size()-1; leng>=0; leng--)
 		{
@@ -44,6 +62,10 @@ public class Rasterizer extends ShaderMath implements Runnable
 		}
 	}
 	
+	/**
+	 * 
+	 * @since 1.0.0
+	 */
 	public void draw(BufferedRequest dr, 
 					 int[] depthPX, 
 					 int[] screenPX,
