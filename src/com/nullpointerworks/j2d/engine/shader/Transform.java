@@ -83,8 +83,8 @@ public class Transform extends ShaderMath implements Runnable
 		/*
 		 * rotate image
 		 */
-		float rotate_w 	= scale_w;
-		float rotate_h 	= scale_h;
+		float rotate_w = scale_w;
+		float rotate_h = scale_h;
 		float sin = 0f;
 		float cos = 1f;
 		if (rotate != null)
@@ -102,34 +102,34 @@ public class Transform extends ShaderMath implements Runnable
 		 */
 	    float[][] m_rotate = 
     	{
-    		{cos,-sin, scale_w*0.5f-1f},
-    		{sin, cos, scale_h*0.5f-1f},
+    		{cos,-sin, scale_w*0.5f},
+    		{sin, cos, scale_h*0.5f},
     		{ 0f,  0f, 1f}
     	};
-	    
 	    float[][] m_scale = 
 	    {
     		{inv_scalew,0f,0f},
     		{0f,inv_scaleh,0f},
     		{0f,0f,1f}
 	    };
-	    
 	    float[][] m_trans = 
 	    {
     		{1f,0f,-x},
     		{0f,1f,-y},
     		{0f,0f,1f}
 	    };
-	    float[][] tmat = M3.mul(m_scale, m_rotate, m_trans);
 	    
-	    BufferedRequest br = req.br;
-	    br.layer 		= req.layer;
+	    /*
+	     * compile transformation data
+	     */
+	    BufferedRequest br = new BufferedRequest();
 	    br.image 		= img;
-	    br.transform 	= tmat;
-	    br.aabb.x 		= x - rotate_w*0.5f;
-	    br.aabb.y 		= y - rotate_h*0.5f;
-	    br.aabb.w 		= rotate_w;
-		br.aabb.h 		= rotate_h;
+	    br.layer 		= req.layer;
+	    br.transform 	= M3.mul(m_scale, m_rotate, m_trans);
+	    br.aabb.x 		= x - 0.5f*rotate_w;
+	    br.aabb.y 		= y - 0.5f*rotate_h;
+	    br.aabb.w 		= br.aabb.x + rotate_w; // w' = x+w
+		br.aabb.h 		= br.aabb.y + rotate_h; // h' = y+h
 	    b.add(br);
 	}
 }

@@ -30,16 +30,10 @@ public class Engine
 	private IntBuffer screen;
 	private int[] depthPX, screenPX;
 	private int CLEAR = 0xFF202020;
+	private float accuracy = 0.49f;
 	private List<Request> requests;
 	private List<BufferedRequest> brequest;
-	private final Comparator<BufferedRequest> compare = new Comparator<BufferedRequest>()
-	{
-		@Override
-		public int compare(BufferedRequest o1, BufferedRequest o2) 
-		{
-			return o2.layer - o1.layer;
-		}
-	};
+	private final Comparator<BufferedRequest> compare;
 	
 	/**
 	 * Creates a new J2D engine object rendering to a frame with the specified dimensions.
@@ -57,10 +51,18 @@ public class Engine
 		
 		requests 	= new ArrayList<Request>();
 		brequest 	= new ArrayList<BufferedRequest>();
+		compare 	= new Comparator<BufferedRequest>()
+		{
+			@Override
+			public int compare(BufferedRequest o1, BufferedRequest o2) 
+			{
+				return o2.layer - o1.layer;
+			}
+		};
 		
 		transform 	= new Transform(requests, brequest);
 		layer		= new Layering(brequest, depth);
-		raster 		= new Rasterizer(brequest, screen, depth, 0.495f);
+		raster 		= new Rasterizer(brequest, screen, depth, accuracy);
 	}
 	
 	/**
@@ -81,7 +83,7 @@ public class Engine
 	public void accuracy(float acc)
 	{
 		if (acc > 1f) acc = 1f;
-		if (acc < 0f) acc = 0.0001f;
+		if (acc < 0.001f) acc = 0.001f;
 		raster.accuracy(acc);
 	}
 	
@@ -135,6 +137,8 @@ public class Engine
 	 */
 	private void clear()
 	{
+		for (int l=brequest.size()-1;l>=0; l--)
+			brequest.get(l).free();
 		requests.clear();
 		brequest.clear();
 	}

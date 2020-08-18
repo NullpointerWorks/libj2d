@@ -81,14 +81,13 @@ public class Rasterizer extends ShaderMath implements Runnable
 		int SOURCE_H 	= source.getHeight();
 		int[] sourcePX 	= source.content();
 		
-		float startx 	= aabb.x - 1f;
-		float endx 		= aabb.w + aabb.x;
-		float starty 	= aabb.y - 1f;
-		float endy 		= aabb.h + aabb.y;
-
 		// screen edge clipping
-		startx = (startx < -0.5)?-0.5f: startx;
-		starty = (starty < -0.5)?-0.5f: starty;
+		float startx 	= aabb.x;
+		float endx 		= aabb.w;
+		float starty 	= aabb.y;
+		float endy 		= aabb.h;
+		startx = (startx < 0f)?0f: startx;
+		starty = (starty < 0f)?0f: starty;
 		endx = (endx >= DEST_W)? DEST_W-1: endx;
 		endy = (endy >= DEST_H)? DEST_H-1: endy;
 		
@@ -99,25 +98,25 @@ public class Rasterizer extends ShaderMath implements Runnable
 				float[] v = {i,j};
 				transform(matrix, v);
 				
-				if (v[0] < -0.5f) continue;
-				int x = rnd(v[0]);
+				if (v[0] < 0f) continue;
+				if (v[1] < 0f) continue;
+				
+				int x = (int)(v[0]);
 				if (x >= SOURCE_W) continue;
 				
-				if (v[1] < -0.5f) continue;
-				int y = rnd(v[1]);
+				int y = (int)(v[1]);
 				if (y >= SOURCE_H) continue;
 				
-				int plotx = rnd(i);
-				int ploty = rnd(j);
+				int plotx = (int)(i);
+				int ploty = (int)(j);
 				int STRIDE = plotx + ploty*DEST_W;
-
+				
 				int lay = depthPX[STRIDE];
 				if (layer < lay) continue;
 				
 				int color = sourcePX[x + y*SOURCE_W];
 				int alpha = (color>>24) & 0xFF;
 				if (alpha == 0) continue;
-				
 				if (alpha < 255) 
 				{
 					int screenCol = screenPX[STRIDE];

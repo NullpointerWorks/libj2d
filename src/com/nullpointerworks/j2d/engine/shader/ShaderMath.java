@@ -8,6 +8,7 @@ package com.nullpointerworks.j2d.engine.shader;
 /**
  * 
  * @since 1.0.0
+ * @author Michiel Drost - Nullpointer Works
  */
 abstract class ShaderMath 
 {
@@ -44,8 +45,7 @@ abstract class ShaderMath
 		vx = mp[0]*v[0] + mp[1]*v[1] + mp[2];
 		mp = m[1];
 		vy = mp[0]*v[0] + mp[1]*v[1] + mp[2];
-		v[0] = vx;
-		v[1] = vy;
+		v[0] = vx; v[1] = vy;
 	}
 	
 	/**
@@ -64,14 +64,5 @@ abstract class ShaderMath
 		ag1 = ag1>>8;
 		rb1 = rb1>>8;
 	    return (ag1 & 0xFF00FF00) + (rb1 & 0x00FF00FF);
-	}
-	
-	/**
-	 * 
-	 * @since 1.0.0
-	 */
-	protected int rnd(float x)
-	{
-		return (int)(x+0.5f);
 	}
 }
