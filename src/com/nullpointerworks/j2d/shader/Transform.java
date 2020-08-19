@@ -1,6 +1,6 @@
 /*
  * Creative Commons - Attribution, Share Alike 4.0 
- * Nullpointer Works (2019)
+ * Nullpointer Works (2020)
  * Use is subject to license terms.
  */
 package com.nullpointerworks.j2d.shader;
@@ -13,7 +13,7 @@ import com.nullpointerworks.math.Approximate;
 import com.nullpointerworks.math.matrix.Matrix3;
 
 /**
- * applies translations, rotations, scaling, etc to the given request
+ * This is the first shader in the engine pipeline. It performs rotation, translation and scaling on the {@code List<Request>} engine queue. The result of these transformations are stored in the {@code List<BufferedRequest>} for the following shaders.
  * @since 1.0.0
  * @author Michiel Drost - Nullpointer Works
  */
@@ -24,7 +24,9 @@ public class Transform extends ShaderMath implements Runnable
 	private Matrix3 M3;
 	
 	/**
-	 * 
+	 * Instantiated a transformation shader object for the J2D engine.
+	 * @param l - engine's request queue
+	 * @param b - engine's rendering queue
 	 * @since 1.0.0
 	 */
 	public Transform(List<Request> l, List<BufferedRequest> b) 
@@ -44,13 +46,12 @@ public class Transform extends ShaderMath implements Runnable
 	}
 	
 	/**
-	 * 
 	 * @since 1.0.0
 	 */
-	public void transform(Request req)
+	private void transform(Request req)
 	{
 		/*
-		 * transform source image
+		 * get request data
 		 */
 		IntBuffer img 	= req.image;
 		Float x			= req.vertex[0];
@@ -97,7 +98,7 @@ public class Transform extends ShaderMath implements Runnable
 		}
 		
 		/*
-		 * create matrices
+		 * create rotation, scaling and translation matrices
 		 */
 	    float[][] m_rotate = 
     	{
@@ -119,7 +120,7 @@ public class Transform extends ShaderMath implements Runnable
 	    };
 	    
 	    /*
-	     * compile transformation data
+	     * create buffer for further engine processing
 	     */
 	    BufferedRequest br = new BufferedRequest();
 	    br.image 		= img;

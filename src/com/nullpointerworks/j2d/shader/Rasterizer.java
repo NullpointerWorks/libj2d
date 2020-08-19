@@ -1,6 +1,6 @@
 /*
  * Creative Commons - Attribution, Share Alike 4.0 
- * Nullpointer Works (2019)
+ * Nullpointer Works (2020)
  * Use is subject to license terms.
  */
 package com.nullpointerworks.j2d.shader;
@@ -10,7 +10,7 @@ import java.util.List;
 import com.nullpointerworks.core.buffer.IntBuffer;
 
 /**
- * 
+ * This is the third and final shader in the J2D engine. This shader performs a depth test and plots pixels. Pixel with transparency are blended with the rendered background.
  * @since 1.0.0
  * @author Michiel Drost - Nullpointer Works
  */
@@ -24,13 +24,17 @@ public class Rasterizer extends ShaderMath implements Runnable
 	private int DEST_H;
 	
 	/**
-	 * 
+	 * Instantiates a rasterizer shader used in the J2D engine.
+	 * @param l - rendering queue
+	 * @param s - rendering frame
+	 * @param d - depth buffer
+	 * @param a - engine rasterizer accuracy
 	 * @since 1.0.0
 	 */
 	public Rasterizer(List<BufferedRequest> l, IntBuffer s, IntBuffer d, float a)
 	{
 		this.l = l;
-		this.a = a;
+		accuracy(a);
 		dpx 	= d.content();
 		spx 	= s.content();
 		DEST_W 	= s.getWidth();
@@ -38,19 +42,20 @@ public class Rasterizer extends ShaderMath implements Runnable
 	}
 	
 	/**
-	 * 
+	 * Sets the pixel accuracy for rasterizer precision. The accuracy value is proportional to performance, but inversely proportional to rendering precision. A high accuracy value results in lower rendering precision, but also improves rendering performance. The accuracy domain is {@code 0 < x <= 1}. 
+	 * @param acc - the rendering accuracy
 	 * @since 1.0.0
 	 */
-	public void accuracy(float a)
+	public void accuracy(float acc)
 	{
-		this.a = a;
+		this.a = acc;
 	}
 	
 	@Override
 	public void run() 
 	{
 		/*
-		 * images are sorted in ascending order, and layering has been applied. begin drawing from the last, most far away image
+		 * The layering shader plots the depth buffer in ascending order(painter's algorithm). The rasterizer draws in the opposite order from back to front.
 		 */
 		for (int leng=l.size()-1; leng>=0; leng--)
 		{
@@ -60,10 +65,9 @@ public class Rasterizer extends ShaderMath implements Runnable
 	}
 	
 	/**
-	 * 
 	 * @since 1.0.0
 	 */
-	public void draw(BufferedRequest dr, 
+	private void draw(BufferedRequest dr, 
 					 int[] depthPX, 
 					 int[] screenPX,
 					 int DEST_W,

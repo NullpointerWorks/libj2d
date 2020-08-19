@@ -1,6 +1,6 @@
 /*
  * Creative Commons - Attribution, Share Alike 4.0 
- * Nullpointer Works (2019)
+ * Nullpointer Works (2020)
  * Use is subject to license terms.
  */
 package com.nullpointerworks.j2d.shader;
@@ -10,7 +10,7 @@ import java.util.List;
 import com.nullpointerworks.core.buffer.IntBuffer;
 
 /**
- * 
+ * This is the second shader in the engine pipeline. This shader does a layer check and potentially culls requests from the rendering queue. 
  * @since 1.0.0
  * @author Michiel Drost - Nullpointer Works
  */
@@ -20,7 +20,9 @@ public class Layering extends ShaderMath implements Runnable
 	private IntBuffer d;
 	
 	/**
-	 * 
+	 * Instantiates a layering shader for the J2D engine.
+	 * @param l - engine's rendering queue
+	 * @param d - engine's depth buffer
 	 * @since 1.0.0
 	 */
 	public Layering(List<BufferedRequest> l, IntBuffer d)
@@ -52,7 +54,7 @@ public class Layering extends ShaderMath implements Runnable
 	 * 
 	 * @since 1.0.0
 	 */
-	public boolean draw(BufferedRequest dr, 
+	private boolean draw(BufferedRequest dr, 
 						int[] depthPX,
 						int DEST_W,
 						int DEST_H) 

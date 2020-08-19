@@ -1,10 +1,8 @@
-/*
- * Creative Commons - Attribution, Share Alike 4.0 
- * Nullpointer Works (2019)
- * Use is subject to license terms.
- */
 /**
- * @version 1.0.0 pre-release
+ * Creative Commons - Attribution, Share Alike 4.0<br>
+ * Nullpointer Works (2020)<br>
+ * Use of this library is subject to license terms.<br>
+ * @version 1.0.0
  * @author Michiel Drost - Nullpointer Works
  */
 module libnpw.j2d

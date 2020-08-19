@@ -1,6 +1,6 @@
 /*
  * Creative Commons - Attribution, Share Alike 4.0 
- * Nullpointer Works (2019)
+ * Nullpointer Works (2020)
  * Use is subject to license terms.
  */
 package com.nullpointerworks.j2d;
@@ -109,7 +109,7 @@ public class Engine
 	}
 	
 	/**
-	 * Generates a new frame from all the queued requests. The result can be accessed with calling the {@code Engine.frame()} or {@code Engine.content()} method. 
+	 * Generates a new frame from all the queued requests. The result can be accessed by calling the {@code Engine.frame()} or {@code Engine.content()} method. 
 	 * @since 1.0.0
 	 */
 	public void generate()
