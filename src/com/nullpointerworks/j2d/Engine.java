@@ -3,18 +3,17 @@
  * Nullpointer Works (2019)
  * Use is subject to license terms.
  */
-package com.nullpointerworks.j2d.engine;
+package com.nullpointerworks.j2d;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import com.nullpointerworks.core.buffer.IntBuffer;
-import com.nullpointerworks.j2d.BufferedRequest;
-import com.nullpointerworks.j2d.Request;
-import com.nullpointerworks.j2d.engine.shader.Layering;
-import com.nullpointerworks.j2d.engine.shader.Rasterizer;
-import com.nullpointerworks.j2d.engine.shader.Transform;
+import com.nullpointerworks.j2d.shader.BufferedRequest;
+import com.nullpointerworks.j2d.shader.Layering;
+import com.nullpointerworks.j2d.shader.Rasterizer;
+import com.nullpointerworks.j2d.shader.Transform;
 
 /**
  * Encapsulates the process of organizing, layering, transforming and rasterizing images. After each frame generation the content will be stored internally until the next generation method is called. 
@@ -45,10 +44,8 @@ public class Engine
 	{
 		depth 		= new IntBuffer(width, height);
 		depthPX 	= depth.content();
-		
 		screen 		= new IntBuffer(width, height);
 		screenPX 	= screen.content();
-		
 		requests 	= new ArrayList<Request>();
 		brequest 	= new ArrayList<BufferedRequest>();
 		compare 	= new Comparator<BufferedRequest>()
@@ -59,7 +56,6 @@ public class Engine
 				return o2.layer - o1.layer;
 			}
 		};
-		
 		transform 	= new Transform(requests, brequest);
 		layer		= new Layering(brequest, depth);
 		raster 		= new Rasterizer(brequest, screen, depth, accuracy);

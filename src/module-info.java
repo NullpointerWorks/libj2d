@@ -7,5 +7,5 @@ module libnpw.j2d
 	requires transitive libnpw.core;
 	requires transitive libnpw.math;
 	exports com.nullpointerworks.j2d;
-	exports com.nullpointerworks.j2d.engine;
+	exports com.nullpointerworks.j2d.shader;
 }

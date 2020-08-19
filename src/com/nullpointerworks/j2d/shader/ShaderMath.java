@@ -3,7 +3,7 @@
  * Nullpointer Works (2019)
  * Use is subject to license terms.
  */
-package com.nullpointerworks.j2d.engine.shader;
+package com.nullpointerworks.j2d.shader;
 
 /**
  * 

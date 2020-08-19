@@ -3,12 +3,11 @@
  * Nullpointer Works (2019)
  * Use is subject to license terms.
  */
-package com.nullpointerworks.j2d.engine.shader;
+package com.nullpointerworks.j2d.shader;
 
 import java.util.List;
 
 import com.nullpointerworks.core.buffer.IntBuffer;
-import com.nullpointerworks.j2d.BufferedRequest;
 import com.nullpointerworks.j2d.Request;
 import com.nullpointerworks.math.Approximate;
 import com.nullpointerworks.math.matrix.Matrix3;

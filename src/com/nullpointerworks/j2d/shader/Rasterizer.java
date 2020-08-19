@@ -3,12 +3,11 @@
  * Nullpointer Works (2019)
  * Use is subject to license terms.
  */
-package com.nullpointerworks.j2d.engine.shader;
+package com.nullpointerworks.j2d.shader;
 
 import java.util.List;
 
 import com.nullpointerworks.core.buffer.IntBuffer;
-import com.nullpointerworks.j2d.BufferedRequest;
 import com.nullpointerworks.math.geometry.g2d.Rectangle;
 
 /**
@@ -16,37 +15,49 @@ import com.nullpointerworks.math.geometry.g2d.Rectangle;
  * @since 1.0.0
  * @author Michiel Drost - Nullpointer Works
  */
-public class Layering extends ShaderMath implements Runnable
+public class Rasterizer extends ShaderMath implements Runnable
 {
 	private List<BufferedRequest> l;
+	private IntBuffer s;
 	private IntBuffer d;
+	private float a;
 	
 	/**
 	 * 
 	 * @since 1.0.0
 	 */
-	public Layering(List<BufferedRequest> l, IntBuffer d)
+	public Rasterizer(List<BufferedRequest> l, IntBuffer s, IntBuffer d, float a)
 	{
 		this.l = l;
+		this.s = s;
 		this.d = d;
+		this.a = a;
+	}
+	
+	/**
+	 * 
+	 * @since 1.0.0
+	 */
+	public void accuracy(float a)
+	{
+		this.a = a;
 	}
 	
 	@Override
 	public void run() 
 	{
-		int[] dPX 	= d.content();
-		int DEST_W 	= d.getWidth();
-		int DEST_H 	= d.getHeight();
+		int[] dpx 	= d.content();
+		int[] spx 	= s.content();
+		int DEST_W 	= s.getWidth();
+		int DEST_H 	= s.getHeight();
 		
 		/*
-		 * images are sorted on layer in ascending order. work our way back to
-		 * detect obfuscated images. they are culled from rendering
+		 * images are sorted in ascending order, and layering has been applied. begin drawing from the last, most far away image
 		 */
 		for (int leng=l.size()-1; leng>=0; leng--)
 		{
 			BufferedRequest di = l.get(leng);
-			boolean c = draw(di, dPX, DEST_W, DEST_H);
-			if (c) l.remove(leng); // cull obfuscated images
+			draw(di, dpx, spx, DEST_W, DEST_H);
 		}
 	}
 	
@@ -54,12 +65,12 @@ public class Layering extends ShaderMath implements Runnable
 	 * 
 	 * @since 1.0.0
 	 */
-	public boolean draw(BufferedRequest dr, 
-						int[] depthPX,
-						int DEST_W,
-						int DEST_H) 
+	public void draw(BufferedRequest dr, 
+					 int[] depthPX, 
+					 int[] screenPX,
+					 int DEST_W,
+					 int DEST_H) 
 	{
-		boolean cull		= true;	
 		IntBuffer source 	= dr.image;
 		Rectangle aabb 		= dr.aabb;
 		float[][] matrix 	= dr.transform;
@@ -69,7 +80,7 @@ public class Layering extends ShaderMath implements Runnable
 		int SOURCE_H 	= source.getHeight();
 		int[] sourcePX 	= source.content();
 		
-		// screen edge clipping		
+		// screen edge clipping
 		float startx 	= aabb.x;
 		float endx 		= aabb.w;
 		float starty 	= aabb.y;
@@ -79,10 +90,10 @@ public class Layering extends ShaderMath implements Runnable
 		endx = (endx >= DEST_W)? DEST_W-1: endx;
 		endy = (endy >= DEST_H)? DEST_H-1: endy;
 		
-		for (float j=starty, k=endy; j<k; j+=1f)
+		for (float j=starty, k=endy; j<k; j+=a)
 		{
-			for (float i=startx, l=endx; i<l; i+=1f)
-			{
+			for (float i=startx, l=endx; i<l; i+=a)
+			{				
 				float[] v = {i,j};
 				transform(matrix, v);
 				
@@ -99,20 +110,19 @@ public class Layering extends ShaderMath implements Runnable
 				int ploty = (int)(j);
 				int STRIDE = plotx + ploty*DEST_W;
 				
-				int depth = depthPX[STRIDE];
-				if (layer < depth) continue;
+				int lay = depthPX[STRIDE];
+				if (layer < lay) continue;
 				
 				int color = sourcePX[x + y*SOURCE_W];
 				int alpha = (color>>24) & 0xFF;
-				if (alpha == 255) continue;
-				
-				if (layer > depth) 
+				if (alpha == 0) continue;
+				if (alpha < 255) 
 				{
-					cull = false;
-					depthPX[STRIDE] = layer;
+					int screenCol = screenPX[STRIDE];
+					color = lerp256(screenCol, color, alpha+1);
 				}
+				screenPX[STRIDE] = color;
 			}
 		}
-		return cull;
 	}
 }

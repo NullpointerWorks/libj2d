@@ -3,7 +3,7 @@
  * Nullpointer Works (2019)
  * Use is subject to license terms.
  */
-package com.nullpointerworks.j2d;
+package com.nullpointerworks.j2d.shader;
 
 import com.nullpointerworks.core.buffer.IntBuffer;
 import com.nullpointerworks.math.geometry.g2d.Rectangle;
