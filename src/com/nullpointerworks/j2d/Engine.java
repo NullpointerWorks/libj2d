@@ -22,14 +22,29 @@ import com.nullpointerworks.j2d.shader.Transform;
  */
 public class Engine 
 {
+	/*
+	 * shaders
+	 */
 	private Transform transform;
 	private Layering layer;
 	private Rasterizer raster;
+	
+	/*
+	 * plot data
+	 */
 	private IntBuffer depth;
 	private IntBuffer screen;
 	private int[] depthPX, screenPX;
+	
+	/*
+	 * engine parameters
+	 */
 	private int CLEAR = 0xFF202020;
 	private float accuracy = 0.495f;
+	
+	/*
+	 * engine internals
+	 */
 	private List<Request> requests;
 	private List<BufferedRequest> brequest;
 	private final Comparator<BufferedRequest> compare;
@@ -79,7 +94,7 @@ public class Engine
 	public void accuracy(float acc)
 	{
 		if (acc > 1f) acc = 1f;
-		if (acc < 0.001f) acc = 0.001f;
+		if (acc < 0.0001f) acc = 0.0001f;
 		raster.accuracy(acc);
 	}
 	

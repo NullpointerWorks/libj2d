@@ -17,9 +17,11 @@ import com.nullpointerworks.core.buffer.IntBuffer;
 public class Rasterizer extends ShaderMath implements Runnable
 {
 	private List<BufferedRequest> l;
-	private IntBuffer s;
-	private IntBuffer d;
 	private float a;
+	private int[] dpx;
+	private int[] spx;
+	private int DEST_W;
+	private int DEST_H;
 	
 	/**
 	 * 
@@ -28,9 +30,11 @@ public class Rasterizer extends ShaderMath implements Runnable
 	public Rasterizer(List<BufferedRequest> l, IntBuffer s, IntBuffer d, float a)
 	{
 		this.l = l;
-		this.s = s;
-		this.d = d;
 		this.a = a;
+		dpx 	= d.content();
+		spx 	= s.content();
+		DEST_W 	= s.getWidth();
+		DEST_H 	= s.getHeight();
 	}
 	
 	/**
@@ -45,11 +49,6 @@ public class Rasterizer extends ShaderMath implements Runnable
 	@Override
 	public void run() 
 	{
-		int[] dpx 	= d.content();
-		int[] spx 	= s.content();
-		int DEST_W 	= s.getWidth();
-		int DEST_H 	= s.getHeight();
-		
 		/*
 		 * images are sorted in ascending order, and layering has been applied. begin drawing from the last, most far away image
 		 */
