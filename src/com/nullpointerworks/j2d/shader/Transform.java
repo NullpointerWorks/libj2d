@@ -125,10 +125,10 @@ public class Transform extends ShaderMath implements Runnable
 	    br.image 		= img;
 	    br.layer 		= req.layer;
 	    br.transform 	= M3.mul(m_scale, m_rotate, m_trans);
-	    br.aabb.x 		= x - 0.5f*rotate_w;
-	    br.aabb.y 		= y - 0.5f*rotate_h;
-	    br.aabb.w 		= br.aabb.x + rotate_w; // w' = x+w
-		br.aabb.h 		= br.aabb.y + rotate_h; // h' = y+h
+	    br.x 	= x - 0.5f*rotate_w;
+	    br.y 	= y - 0.5f*rotate_h;
+	    br.w 	= br.x + rotate_w; // w' = x+w
+		br.h 	= br.y + rotate_h; // h' = y+h
 	    b.add(br);
 	}
 }

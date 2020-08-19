@@ -8,7 +8,6 @@ package com.nullpointerworks.j2d.shader;
 import java.util.List;
 
 import com.nullpointerworks.core.buffer.IntBuffer;
-import com.nullpointerworks.math.geometry.g2d.Rectangle;
 
 /**
  * 
@@ -60,7 +59,6 @@ public class Layering extends ShaderMath implements Runnable
 	{
 		boolean cull		= true;	
 		IntBuffer source 	= dr.image;
-		Rectangle aabb 		= dr.aabb;
 		float[][] matrix 	= dr.transform;
 		int layer			= dr.layer;
 		
@@ -69,10 +67,10 @@ public class Layering extends ShaderMath implements Runnable
 		int[] sourcePX 	= source.content();
 		
 		// screen edge clipping		
-		float startx 	= aabb.x;
-		float endx 		= aabb.w;
-		float starty 	= aabb.y;
-		float endy 		= aabb.h;
+		float startx 	= dr.x;
+		float endx 		= dr.w;
+		float starty 	= dr.y;
+		float endy 		= dr.h;
 		startx = (startx < 0f)?0f: startx;
 		starty = (starty < 0f)?0f: starty;
 		endx = (endx >= DEST_W)? DEST_W-1: endx;

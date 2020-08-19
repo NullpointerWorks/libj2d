@@ -6,7 +6,6 @@
 package com.nullpointerworks.j2d.shader;
 
 import com.nullpointerworks.core.buffer.IntBuffer;
-import com.nullpointerworks.math.geometry.g2d.Rectangle;
 
 /**
  * The engine performs various calculations before rendering. This object is an intermediate state between requesting and rendering.
@@ -32,7 +31,22 @@ public class BufferedRequest
 	/**
 	 * @since 1.0.0
 	 */
-	public Rectangle aabb = new Rectangle(0f,0f,0f,0f);
+	public float x = 0f;
+	
+	/**
+	 * @since 1.0.0
+	 */
+	public float y = 0f;
+	
+	/**
+	 * @since 1.0.0
+	 */
+	public float w = 0f;
+	
+	/**
+	 * @since 1.0.0
+	 */
+	public float h = 0f;
 	
 	/**
 	 * @since 1.0.0
@@ -41,6 +55,5 @@ public class BufferedRequest
 	{
 		image		= null;
 		transform 	= null;
-		aabb 		= null;
 	}
 }

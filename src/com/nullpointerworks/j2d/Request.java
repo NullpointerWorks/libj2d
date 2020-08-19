@@ -144,4 +144,21 @@ public class Request
 		scale_h = null;
 		chroma	= null;
 	}
+	
+	/**
+	 * Returns a new instance as a copy of this request. All other references stay the same, for example, the image {@code IntBuffer} source object.
+	 * @return a new instance as a copy of this request
+	 * @since 1.0.0
+	 */
+	public Request copy()
+	{
+		Request nr = new Request();
+		nr.image(image);
+		nr.translate(vertex[0], vertex[1]);
+		nr.scale(scale_w, scale_h);
+		nr.layer(layer);
+		nr.rotate(angle);
+		nr.chroma(chroma);
+		return nr;
+	}
 }

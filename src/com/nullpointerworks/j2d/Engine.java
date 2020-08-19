@@ -29,7 +29,7 @@ public class Engine
 	private IntBuffer screen;
 	private int[] depthPX, screenPX;
 	private int CLEAR = 0xFF202020;
-	private float accuracy = 0.49f;
+	private float accuracy = 0.495f;
 	private List<Request> requests;
 	private List<BufferedRequest> brequest;
 	private final Comparator<BufferedRequest> compare;
@@ -72,7 +72,7 @@ public class Engine
 	}
 	
 	/**
-	 * Sets the accuracy for rasterizer precision. The accuracy value is proportional to performance, but inversely proportional to rendering precision. A high accuracy value results in lower rendering precision, but also improves rendering performance. The accuracy domain is {@code 0 < x <= 1}. The default value is {@code 0.495}. 
+	 * Sets the pixel accuracy for rasterizer precision. The accuracy value is proportional to performance, but inversely proportional to rendering precision. A high accuracy value results in lower rendering precision, but also improves rendering performance. The accuracy domain is {@code 0 < x <= 1}. The default value is {@code 0.495}. 
 	 * @param acc - the rendering accuracy
 	 * @since 1.0.0
 	 */
@@ -133,9 +133,9 @@ public class Engine
 	 */
 	private void clear()
 	{
+		requests.clear();
 		for (int l=brequest.size()-1;l>=0; l--)
 			brequest.get(l).free();
-		requests.clear();
 		brequest.clear();
 	}
 	
