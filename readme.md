@@ -1,4 +1,3 @@
-<a target="_blank" href="https://unlicense.org"><img src="https://unlicense.org/pd-icon.png" alt="Unlicense" width="40"/> Unlicense</a>
 
 # libj2d
 A simple 2D rending library. It handles windowing, sprite transformation, layering and alpha blending.
